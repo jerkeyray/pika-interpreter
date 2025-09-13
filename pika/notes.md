@@ -1,2 +1,3 @@
 - support line and char info in the tokens later on
 - support utf-8 by using runes instead of a byte later on
+- we only support integers for now

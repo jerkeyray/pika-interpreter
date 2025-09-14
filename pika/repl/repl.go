@@ -18,7 +18,7 @@ func Start(in io.Reader, out io.Reader) {
 	// infinite read eval print loop
 	for {
 		// print >>
-		fmt.Printf(PROMPT)
+		fmt.Print(PROMPT)
 		scanned := scanner.Scan()
 		// if nothing scanned return 
 		if !scanned {

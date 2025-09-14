@@ -2,6 +2,7 @@ package ast
 
 import (
 	"pika/token"
+	"bytes"
 )
 
 // top level design
@@ -10,6 +11,7 @@ import (
 // interface for every node in our ast
 type Node interface {
 	TokenLiteral() string
+	String() string
 }
 
 type Statement interface {
@@ -65,3 +67,23 @@ type ReturnStatement struct {
 
 func (rs *ReturnStatement) statementNode() {}
 func (rs *ReturnStatement) TokenLiteral() string {return rs.Token.Literal}
+
+// implement expression statements
+type ExpressionStatement struct {
+	Token token.Token
+	Expression Expression
+}
+
+func (es *ExpressionStatement) statementNode() {}
+func (es *ExpressionStatement) TokenLiteral() string {return es.Token.Literal}
+
+// create a buffer and write value of each statments String() method to it
+func (p *Program) String() string {
+	var out bytes.Buffer
+	for _, s := range p.Statements {
+		out.WriteString(s.String())
+	}
+	return out.String()
+}
+
+

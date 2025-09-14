@@ -1,7 +1,8 @@
 package ast
 
-import "go/token"
-
+import(
+	"pika/token"
+)
 // top level design
 // ast program -> statements -> let statement -> identifier(name) and expression(value)
 
@@ -43,7 +44,7 @@ type LetStatement struct {
 
 // methods to satisfy statement interface
 func (ls *LetStatement) statementNode() {}
-func (ls *LetStatement) TokenLiteral() {return ls.Token.Literal}
+func (ls *LetStatement) TokenLiteral() string {return ls.Token.Literal}
 
 // identifier should only have the value
 type Identifier struct {
@@ -53,4 +54,4 @@ type Identifier struct {
 
 // methods to satisfy expression interface since it can produce values in some cases
 func (i *Identifier) expressionNode() {}
-func (i *Identifier) TokenLiteral() {return i.Token.Literal}
+func (i *Identifier) TokenLiteral() string {return i.Token.Literal}

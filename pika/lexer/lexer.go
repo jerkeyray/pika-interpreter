@@ -33,7 +33,7 @@ func (l *Lexer) readChar() {
 func (l *Lexer) NextToken() token.Token {
 	var tok token.Token
 	// don't count whitespaces
-	l.skipWhitespace();
+	l.skipWhitespace()
 
 	switch l.ch {
 	case '=':
@@ -41,7 +41,7 @@ func (l *Lexer) NextToken() token.Token {
 		if l.peekChar() == '=' {
 			ch := l.ch
 			l.readChar()
-			tok = token.Token{Type: token.EQ, Literal: string(ch) + string(l.ch) }
+			tok = token.Token{Type: token.EQ, Literal: string(ch) + string(l.ch)}
 		} else {
 			tok = newToken(token.ASSIGN, l.ch)
 		}
@@ -87,7 +87,7 @@ func (l *Lexer) NextToken() token.Token {
 			tok.Literal = l.readIdentifier()
 			tok.Type = token.LookupIdent(tok.Literal)
 			return tok
-		} else if isDigit(l.ch){
+		} else if isDigit(l.ch) {
 			// check if digit, return type and literal accordingly
 			tok.Type = token.INT
 			tok.Literal = l.readNumber()
@@ -105,12 +105,12 @@ func newToken(tokenType token.TokenType, ch byte) token.Token {
 	return token.Token{Type: tokenType, Literal: string(ch)}
 }
 
-func (l *Lexer) readIdentifier() string{
+func (l *Lexer) readIdentifier() string {
 	position := l.position
 	for l.isLetter(l.ch) {
 		l.readChar()
 	}
-	return l.input[position: l.position]
+	return l.input[position:l.position]
 }
 
 func (l *Lexer) isLetter(ch byte) bool {
@@ -124,14 +124,14 @@ func (l *Lexer) skipWhitespace() {
 	}
 }
 
-// read a number like 123 by looping through each char in string until 
+// read a number like 123 by looping through each char in string until
 // a non digit char is found and return the number
 func (l *Lexer) readNumber() string {
 	position := l.position
 	for isDigit(l.ch) {
 		l.readChar()
 	}
-	return l.input[position: l.position]
+	return l.input[position:l.position]
 }
 
 func isDigit(ch byte) bool {
@@ -139,7 +139,7 @@ func isDigit(ch byte) bool {
 }
 
 func (l *Lexer) peekChar() byte {
-	if l.readPosition >= len(l.input){
+	if l.readPosition >= len(l.input) {
 		return 0
 	} else {
 		return l.input[l.readPosition]

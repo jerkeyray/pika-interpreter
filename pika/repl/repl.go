@@ -2,8 +2,8 @@ package repl
 
 import (
 	"bufio"
-	"io"
 	"fmt"
+	"io"
 	"pika/lexer"
 	"pika/token"
 )
@@ -20,14 +20,14 @@ func Start(in io.Reader, out io.Reader) {
 		// print >>
 		fmt.Print(PROMPT)
 		scanned := scanner.Scan()
-		// if nothing scanned return 
+		// if nothing scanned return
 		if !scanned {
-			return 
+			return
 		}
 		// get the line and initialize a lexer with the line as input
 		line := scanner.Text()
 		l := lexer.New(line)
-		
+
 		// print all the tokens from the lexer
 		for tok := l.NextToken(); tok.Type != token.EOF; tok = l.NextToken() {
 			fmt.Printf("%+v\n", tok)

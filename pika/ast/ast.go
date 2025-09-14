@@ -1,8 +1,9 @@
 package ast
 
-import(
+import (
 	"pika/token"
 )
+
 // top level design
 // ast program -> statements -> let statement -> identifier(name) and expression(value)
 
@@ -17,8 +18,8 @@ type Statement interface {
 }
 
 type Expression interface {
-	Node 
-	expressionNode()	
+	Node
+	expressionNode()
 }
 
 type Program struct {
@@ -27,7 +28,7 @@ type Program struct {
 
 // method on program to return token literal of first statement
 // if not found return empty string
-func(p *Program) TokenLiteral() string {
+func (p *Program) TokenLiteral() string {
 	if len(p.Statements) > 0 {
 		return p.Statements[0].TokenLiteral()
 	} else {
@@ -38,13 +39,13 @@ func(p *Program) TokenLiteral() string {
 // for say x = 5, x is identifier and 5 is value(expression)
 type LetStatement struct {
 	Token token.Token
-	Name *Identifier
-	Value	Expression
+	Name  *Identifier
+	Value Expression
 }
 
 // methods to satisfy statement interface
-func (ls *LetStatement) statementNode() {}
-func (ls *LetStatement) TokenLiteral() string {return ls.Token.Literal}
+func (ls *LetStatement) statementNode()       {}
+func (ls *LetStatement) TokenLiteral() string { return ls.Token.Literal }
 
 // identifier should only have the value
 type Identifier struct {
@@ -53,5 +54,5 @@ type Identifier struct {
 }
 
 // methods to satisfy expression interface since it can produce values in some cases
-func (i *Identifier) expressionNode() {}
-func (i *Identifier) TokenLiteral() string {return i.Token.Literal}
+func (i *Identifier) expressionNode()      {}
+func (i *Identifier) TokenLiteral() string { return i.Token.Literal }

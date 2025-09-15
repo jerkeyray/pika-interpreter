@@ -124,3 +124,29 @@ func TestIdentifierExpression(t *testing.T) {
 			ident.TokenLiteral())
 	}
 }
+
+func TestIntegerLiteralExpression(t *testing.T) {
+	input := "5;"
+	l := lexer.New(input)
+	p := New(l)
+	program := p.ParseProgram()
+	checkParserErrors(t, p)
+	if len(program.Statements) != 1 {
+		t.Fatalf("program has not enough statements. got=%d",
+			len(program.Statements))
+	}
+	stmt, ok := program.Statements[0].(*ast.ExpressionStatement)
+	if !ok {
+		t.Fatalf("program.Statements[0] is not ast.ExpressionStatement. got=%T",
+			program.Statements[0])
+	}
+	// The AST may not have a concrete IntegerLiteral type in this version.
+	// Check generically using the Node interface methods.
+	exp := stmt.Expression
+	if exp.TokenLiteral() != "5" {
+		t.Errorf("exp.TokenLiteral not %q. got=%q", "5", exp.TokenLiteral())
+	}
+	if exp.String() != "5" {
+		t.Errorf("exp.String() not %q. got=%q", "5", exp.String())
+	}
+}

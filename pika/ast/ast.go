@@ -60,23 +60,23 @@ func (i *Identifier) expressionNode()      {}
 func (i *Identifier) TokenLiteral() string { return i.Token.Literal }
 func (i *Identifier) String() string       { return i.Value }
 
-// return statement 
+// return statement
 type ReturnStatement struct {
-	Token token.Token
+	Token       token.Token
 	ReturnValue Expression
 }
 
-func (rs *ReturnStatement) statementNode() {}
-func (rs *ReturnStatement) TokenLiteral() string {return rs.Token.Literal}
+func (rs *ReturnStatement) statementNode()       {}
+func (rs *ReturnStatement) TokenLiteral() string { return rs.Token.Literal }
 
 // implement expression statements
 type ExpressionStatement struct {
-	Token token.Token
+	Token      token.Token
 	Expression Expression
 }
 
-func (es *ExpressionStatement) statementNode() {}
-func (es *ExpressionStatement) TokenLiteral() string {return es.Token.Literal}
+func (es *ExpressionStatement) statementNode()       {}
+func (es *ExpressionStatement) TokenLiteral() string { return es.Token.Literal }
 
 // methods to print out nodes like code
 // create a buffer and write value of each statments String() method to it
@@ -93,7 +93,7 @@ func (p *Program) String() string {
 func (ls *LetStatement) String() string {
 	var out bytes.Buffer
 
-	out.WriteString(ls.TokenLiteral() + " ");
+	out.WriteString(ls.TokenLiteral() + " ")
 	out.WriteString(ls.Name.String())
 	out.WriteString(" = ")
 
@@ -125,4 +125,3 @@ func (es *ExpressionStatement) String() string {
 	}
 	return ""
 }
-

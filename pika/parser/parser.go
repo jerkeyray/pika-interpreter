@@ -1,10 +1,10 @@
 package parser
 
 import (
+	"fmt"
 	"pika/ast"
 	"pika/lexer"
 	"pika/token"
-	"fmt"
 )
 
 type Parser struct {
@@ -23,11 +23,21 @@ type Parser struct {
 func New(l *lexer.Lexer) *Parser {
 	p := &Parser{l: l, errors: []string{}}
 
+	// initialize parseFns maps on parser and register a parsing function
+	p.prefixParseFns = make(map[token.TokenType]prefixParseFn)
+	p.registerPrefix(token.IDENT, p.parseIdentifier)
+
 	// read two tokens to set curToken and peekToken
 	p.nextToken()
 	p.nextToken()
 
 	return p
+}
+
+// return ast.Identifer with current token and its value
+// does not advance the tokens
+func (p *Parser) parseIdentifier() ast.Expression {
+	return &ast.Identifier{Token: p.curToken, Value: p.curToken.Literal}
 }
 
 // helper to read next token from the lexer
@@ -62,11 +72,11 @@ func (p *Parser) parseStatement() ast.Statement {
 	case token.RETURN:
 		return p.parseReturnStatement()
 	default:
-		return nil
+		return p.parseExpressionStatement()
 	}
 }
 
-// method to be called by parseStatement() 
+// method to be called by parseStatement()
 // first create *ast.LetStatement node
 // use ident token to create identifier node
 // look for assign token then jumps over the expression from equal sign to semicolon
@@ -114,7 +124,7 @@ func (p *Parser) expectPeek(t token.TokenType) bool {
 func (p *Parser) Errors() []string {
 	return p.errors
 }
- 
+
 // add error msg to error field in parser when peek token doesn't match token type required
 func (p *Parser) peekError(t token.TokenType) {
 	msg := fmt.Sprintf("expected next token to be be %s, got %s instead", t, p.peekToken.Type)
@@ -136,8 +146,8 @@ func (p *Parser) parseReturnStatement() *ast.ReturnStatement {
 }
 
 type (
-	prefixParseFn	func() ast.Expression
-	infixParseFn	func(ast.Expression) ast.Expression // this takes left expression as an arguement
+	prefixParseFn func() ast.Expression
+	infixParseFn  func(ast.Expression) ast.Expression // this takes left expression as an arguement
 )
 
 // helper methods to add entries to the fn maps
@@ -147,4 +157,42 @@ func (p *Parser) registerPrefix(tokenType token.TokenType, fn prefixParseFn) {
 
 func (p *Parser) registerInfix(tokenType token.TokenType, fn infixParseFn) {
 	p.infixParseFns[tokenType] = fn
+}
+
+func (p *Parser) parseExpressionStatement() *ast.ExpressionStatement {
+	// build out ast node for expression statements
+	stmt := &ast.ExpressionStatement{Token: p.curToken}
+
+	stmt.Expression = p.parseExpression(LOWEST)
+
+	// semicolon is optional in this statement
+	if p.peekTokenIs(token.SEMICOLON) {
+		p.nextToken()
+	}
+
+	return stmt
+}
+
+// precedence order of pika programming language
+const (
+	_ int = iota // gives following constants incrementing numbers as values (1 - 7)
+	LOWEST
+	EQUALS      // ==
+	LESSGREATER // > or <
+	SUM         // +
+	PRODUCT     // *
+	PREFIX      // -X or !X
+	CALL        // myFunction(X)
+)
+
+func (p *Parser) parseExpression(precedence int) ast.Expression {
+	// check if any parse fn is associated with current token type
+	// if yes call it
+	prefix := p.prefixParseFns[p.curToken.Type]
+	if prefix == nil {
+		return nil
+	}
+
+	leftExp := prefix()
+	return leftExp
 }

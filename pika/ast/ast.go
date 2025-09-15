@@ -135,3 +135,14 @@ type IntegerLiteral struct {
 func (il *IntegerLiteral) expressionNode() {} 
 func (il *IntegerLiteral) TokenLiteral() string {return il.Token.Literal}
 func (il *IntegerLiteral) String() string {return il.Token.Literal}
+
+// for parsing !5 or -5
+type PrefixExpression struct {
+	Token token.Token
+	Operator string
+	Right Expression
+}
+
+func (pe *PrefixExpression) expressionNode() {}
+func (pe *PrefixExpression) TokenLiteral() string {return pe.Token.Literal}
+func(pe *PrefixExpression) String() string {return pe.Token.Literal}

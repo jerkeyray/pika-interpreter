@@ -28,6 +28,8 @@ func New(l *lexer.Lexer) *Parser {
 	p.prefixParseFns = make(map[token.TokenType]prefixParseFn)
 	p.registerPrefix(token.IDENT, p.parseIdentifier)
 	p.registerPrefix(token.INT, p.parseIntegerLiteral)
+	p.registerPrefix(token.BANG, p.parsePrefixExpression)
+	p.registerPrefix(token.MINUS, p.parsePrefixExpression)
 
 	// read two tokens to set curToken and peekToken
 	p.nextToken()
@@ -192,6 +194,7 @@ func (p *Parser) parseExpression(precedence int) ast.Expression {
 	// if yes call it
 	prefix := p.prefixParseFns[p.curToken.Type]
 	if prefix == nil {
+		p.noPrefixParseFnError(p.curToken.Type)
 		return nil
 	}
 
@@ -206,7 +209,7 @@ func (p *Parser) parseIntegerLiteral() ast.Expression {
 	value, err := strconv.ParseInt(p.curToken.Literal, 0, 64)
 	
 	if err != nil {
-		msg := fmt.Sprintf("could not parse %q as an integer.\n", p.curToken.Literal)
+		msg := fmt.Sprintf("could not parse %q as an integer", p.curToken.Literal)
 		p.errors = append(p.errors, msg)
 		return nil
 	}
@@ -216,3 +219,21 @@ func (p *Parser) parseIntegerLiteral() ast.Expression {
 	return lit
 }
 
+func (p *Parser) noPrefixParseFnError(t token.TokenType) {
+	msg :=	fmt.Sprintf("no prefix parse function for %s found", t)
+	p.errors = append(p.errors, msg)
+}
+
+func (p *Parser) parsePrefixExpression() ast.Expression {
+	// build an ast node and advance the token
+	expression := &ast.PrefixExpression{
+		Token: p.curToken,
+		Operator: p.curToken.Literal, 
+	}
+
+	p.nextToken()
+	// call parse expression again after advancing the token
+	expression.Right = p.parseExpression(PREFIX)
+
+	return expression
+}

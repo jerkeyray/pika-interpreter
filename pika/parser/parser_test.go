@@ -3,6 +3,7 @@ package parser
 import (
 	"pika/ast"
 	"pika/lexer"
+	"strconv"
 	"testing"
 )
 
@@ -149,4 +150,65 @@ func TestIntegerLiteralExpression(t *testing.T) {
 	if exp.String() != "5" {
 		t.Errorf("exp.String() not %q. got=%q", "5", exp.String())
 	}
+}
+
+func TestParsingPrefixExpressions(t *testing.T) {
+	prefixTests := []struct {
+		input    string
+		operator string
+		value    string
+	}{
+		{"!5;", "!", "5"},
+		{"-15;", "-", "15"},
+	}
+
+	for _, tt := range prefixTests {
+		l := lexer.New(tt.input)
+		p := New(l)
+		program := p.ParseProgram()
+		checkParserErrors(t, p)
+
+		if len(program.Statements) != 1 {
+			t.Fatalf("program.Statements does not contain %d statements. got=%d\n", 1, len(program.Statements))
+		}
+
+		stmt, ok := program.Statements[0].(*ast.ExpressionStatement)
+		if !ok {
+			t.Fatalf("program.Statements[0] is not ast.ExpressionStatement. got=%T", program.Statements[0])
+		}
+
+		exp, ok := stmt.Expression.(*ast.PrefixExpression)
+		if !ok {
+			t.Fatalf("stmt.Expression is not *ast.PrefixExpression. got=%T", stmt.Expression)
+		}
+
+		if exp.Operator != tt.operator {
+			t.Fatalf("exp.Operator is wrong. got=%q, want=%q", exp.Operator, tt.operator)
+		}
+
+		// Verify right-hand side without relying on concrete IntegerLiteral type
+		if exp.Right == nil {
+			t.Fatalf("exp.Right is nil")
+		}
+		if exp.Right.TokenLiteral() != tt.value {
+			t.Fatalf("right.TokenLiteral wrong. got=%q want=%q", exp.Right.TokenLiteral(), tt.value)
+		}
+		if exp.Right.String() != tt.value {
+			t.Fatalf("right.String wrong. got=%q want=%q", exp.Right.String(), tt.value)
+		}
+	}
+}
+
+func testIntegerLiteral(t *testing.T, il ast.Expression, value int64) bool {
+	// Generic check: verify the node prints and tokens to the expected integer value.
+	expected := strconv.FormatInt(value, 10)
+	if il.TokenLiteral() != expected {
+		t.Errorf("il.TokenLiteral not %q. got=%q", expected, il.TokenLiteral())
+		return false
+	}
+	if il.String() != expected {
+		t.Errorf("il.String() not %q. got=%q", expected, il.String())
+		return false
+	}
+	return true
 }

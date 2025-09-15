@@ -14,6 +14,10 @@ type Parser struct {
 	curToken  token.Token
 	peekToken token.Token
 	errors    []string
+
+	// use map to check if there is a parsing function associated with current token type
+	prefixParseFns map[token.TokenType]prefixParseFn
+	infixParseFns  map[token.TokenType]infixParseFn
 }
 
 func New(l *lexer.Lexer) *Parser {
@@ -129,4 +133,18 @@ func (p *Parser) parseReturnStatement() *ast.ReturnStatement {
 	}
 
 	return stmt
+}
+
+type (
+	prefixParseFn	func() ast.Expression
+	infixParseFn	func(ast.Expression) ast.Expression // this takes left expression as an arguement
+)
+
+// helper methods to add entries to the fn maps
+func (p *Parser) registerPrefix(tokenType token.TokenType, fn prefixParseFn) {
+	p.prefixParseFns[tokenType] = fn
+}
+
+func (p *Parser) registerInfix(tokenType token.TokenType, fn infixParseFn) {
+	p.infixParseFns[tokenType] = fn
 }

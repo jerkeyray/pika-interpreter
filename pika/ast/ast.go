@@ -1,8 +1,8 @@
 package ast
 
 import (
-	"pika/token"
 	"bytes"
+	"pika/token"
 )
 
 // top level design
@@ -58,6 +58,7 @@ type Identifier struct {
 // methods to satisfy expression interface since it can produce values in some cases
 func (i *Identifier) expressionNode()      {}
 func (i *Identifier) TokenLiteral() string { return i.Token.Literal }
+func (i *Identifier) String() string       { return i.Value }
 
 // return statement 
 type ReturnStatement struct {
@@ -77,6 +78,7 @@ type ExpressionStatement struct {
 func (es *ExpressionStatement) statementNode() {}
 func (es *ExpressionStatement) TokenLiteral() string {return es.Token.Literal}
 
+// methods to print out nodes like code
 // create a buffer and write value of each statments String() method to it
 func (p *Program) String() string {
 	var out bytes.Buffer
@@ -86,4 +88,41 @@ func (p *Program) String() string {
 	return out.String()
 }
 
+// return string in format "let x = 5;"
+// if nill then "let x = ;"
+func (ls *LetStatement) String() string {
+	var out bytes.Buffer
+
+	out.WriteString(ls.TokenLiteral() + " ");
+	out.WriteString(ls.Name.String())
+	out.WriteString(" = ")
+
+	if ls.Value != nil {
+		out.WriteString(ls.Value.String())
+	}
+	out.WriteString(";")
+	return out.String()
+}
+
+// return string in format "return 5;"
+func (rs *ReturnStatement) String() string {
+	var out bytes.Buffer
+
+	out.WriteString(rs.TokenLiteral() + " ")
+
+	if rs.ReturnValue != nil {
+		out.WriteString(rs.ReturnValue.String())
+	}
+
+	out.WriteString(";")
+	return out.String()
+}
+
+// return string in format "x + 5"
+func (es *ExpressionStatement) String() string {
+	if es.Expression != nil {
+		return es.Expression.String()
+	}
+	return ""
+}
 

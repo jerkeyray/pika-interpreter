@@ -33,6 +33,7 @@ func New(l *lexer.Lexer) *Parser {
 	p.registerPrefix(token.TRUE, p.parseBoolean)
 	p.registerPrefix(token.FALSE, p.parseBoolean)
 	p.registerPrefix(token.LPAREN, p.parseGroupedExpression)
+	p.registerPrefix(token.IF, p.parseIfExpression)
 
 	// infix parse functions
 	p.infixParseFns = make(map[token.TokenType]infixParseFn)
@@ -234,7 +235,7 @@ func (p *Parser) parseIntegerLiteral() ast.Expression {
 
 	// convert string to int64
 	value, err := strconv.ParseInt(p.curToken.Literal, 0, 64)
-	
+
 	if err != nil {
 		msg := fmt.Sprintf("could not parse %q as an integer", p.curToken.Literal)
 		p.errors = append(p.errors, msg)
@@ -247,15 +248,15 @@ func (p *Parser) parseIntegerLiteral() ast.Expression {
 }
 
 func (p *Parser) noPrefixParseFnError(t token.TokenType) {
-	msg :=	fmt.Sprintf("no prefix parse function for %s found", t)
+	msg := fmt.Sprintf("no prefix parse function for %s found", t)
 	p.errors = append(p.errors, msg)
 }
 
 func (p *Parser) parsePrefixExpression() ast.Expression {
 	// build an ast node and advance the token
 	expression := &ast.PrefixExpression{
-		Token: p.curToken,
-		Operator: p.curToken.Literal, 
+		Token:    p.curToken,
+		Operator: p.curToken.Literal,
 	}
 
 	p.nextToken()
@@ -265,14 +266,14 @@ func (p *Parser) parsePrefixExpression() ast.Expression {
 	return expression
 }
 
-var precedences = map[token.TokenType]int {
-	token.EQ: EQUALS,
-	token.NOT_EQ: EQUALS,
-	token.LT: LESSGREATER,
-	token.GT: LESSGREATER,
-	token.PLUS: SUM,
-	token.MINUS: SUM,
-	token.SLASH: PRODUCT,
+var precedences = map[token.TokenType]int{
+	token.EQ:       EQUALS,
+	token.NOT_EQ:   EQUALS,
+	token.LT:       LESSGREATER,
+	token.GT:       LESSGREATER,
+	token.PLUS:     SUM,
+	token.MINUS:    SUM,
+	token.SLASH:    PRODUCT,
 	token.ASTERISK: PRODUCT,
 }
 
@@ -288,17 +289,17 @@ func (p *Parser) curPrecedence() int {
 	if p, ok := precedences[p.curToken.Type]; ok {
 		return p
 	}
-	
+
 	return LOWEST
 }
 
 func (p *Parser) parseInfixExpression(left ast.Expression) ast.Expression {
 	// take a left expression as arguement unlike prefix expression
 	// build out the ast node
-	expression := &ast.InfixExpression {
-		Token: p.curToken,
+	expression := &ast.InfixExpression{
+		Token:    p.curToken,
 		Operator: p.curToken.Literal,
-		Left: left,
+		Left:     left,
 	}
 
 	// store the precedence of the operator token in precedence and fill the right field of node
@@ -318,12 +319,65 @@ func (p *Parser) parseBoolean() ast.Expression {
 // parse grouped expressions
 func (p *Parser) parseGroupedExpression() ast.Expression {
 	p.nextToken()
-
 	exp := p.parseExpression(LOWEST)
 
+	if !p.expectPeek(token.RPAREN) {
+		return nil
+	}
+	
+	return exp
+}
+
+// parse if expression
+func (p *Parser) parseIfExpression() ast.Expression {
+	expression := &ast.IfExpression{Token: p.curToken}
+
+	// if next token is not lparen return error
 	if !p.expectPeek(token.LPAREN) {
+		return nil 
+	}
+
+	// advance to next token
+	p.nextToken()
+	expression.Condition = p.parseExpression(LOWEST)
+
+	if !p.expectPeek(token.RPAREN) {
 		return nil
 	}
 
-	return exp
+	if !p.expectPeek(token.LBRACE) {
+		return nil
+	}
+
+	expression.Consequence = p.parseBlockStatement()
+
+	// allow optional else but don't add a parser to it if there no else statement
+	if p.peekTokenIs(token.ELSE) {
+		p.nextToken()
+
+		if !p.expectPeek(token.RBRACE) {
+			return nil
+		}
+
+		expression.Alternative = p.parseBlockStatement()
+	}
+
+	return expression
+}
+
+func (p *Parser) parseBlockStatement() *ast.BlockStatement {
+	block := &ast.BlockStatement{Token: p.curToken}
+	block.Statements = []ast.Statement{}
+
+	p.nextToken()
+
+	for !p.curTokenIs(token.RBRACE) && !p.curTokenIs(token.EOF) {
+		stmt := p.parseStatement()
+		if stmt != nil {
+			block.Statements = append(block.Statements, stmt)
+		}
+		p.nextToken()
+	}
+
+	return block
 }

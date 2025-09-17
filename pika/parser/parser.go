@@ -30,6 +30,8 @@ func New(l *lexer.Lexer) *Parser {
 	p.registerPrefix(token.INT, p.parseIntegerLiteral)
 	p.registerPrefix(token.BANG, p.parsePrefixExpression)
 	p.registerPrefix(token.MINUS, p.parsePrefixExpression)
+	p.registerPrefix(token.TRUE, p.parseBoolean)
+	p.registerPrefix(token.FALSE, p.parseBoolean)
 
 	// infix parse functions
 	p.infixParseFns = make(map[token.TokenType]infixParseFn)
@@ -201,8 +203,8 @@ const (
 )
 
 func (p *Parser) parseExpression(precedence int) ast.Expression {
-	// check if any parse fn is associated with current token type
-	// if yes call it
+	// check if any prefix parse fn is associated with current token type
+	// if yes call parsePrefixFns and assign the ast.integerLiteral to leftExp
 	prefix := p.prefixParseFns[p.curToken.Type]
 	if prefix == nil {
 		p.noPrefixParseFnError(p.curToken.Type)
@@ -210,6 +212,8 @@ func (p *Parser) parseExpression(precedence int) ast.Expression {
 	}
 	leftExp := prefix()
 
+	// next token is not a semicolon and next precedence is high than current precedence
+	// call parse infix fn
 	for !p.peekTokenIs(token.SEMICOLON) && precedence < p.peekPrecedence() {
 		infix := p.infixParseFns[p.peekToken.Type]
 		if infix == nil {
@@ -303,4 +307,9 @@ func (p *Parser) parseInfixExpression(left ast.Expression) ast.Expression {
 	expression.Right = p.parseExpression(precedence)
 
 	return expression
+}
+
+// parse booleans
+func (p *Parser) parseBoolean() ast.Expression {
+	return &ast.Boolean{Token: p.curToken, Value: p.curTokenIs(token.TRUE)}
 }

@@ -6,6 +6,7 @@ import (
 	"io"
 	"pika/lexer"
 	"pika/parser"
+	"pika/evaluator"
 )
 
 const PROMPT = ">>"
@@ -45,13 +46,15 @@ func Start(in io.Reader, out io.Writer) {
 			continue
 		}
 
-		io.WriteString(out, program.String())
-		io.WriteString(out, "\n")
+		evaluated := evaluator.Eval(program)
+		if evaluated != nil {
+			io.WriteString(out, evaluated.Inspect())
+			io.WriteString(out, "\n")
+		}
 	}
 }
 
 func printParserErrors(out io.Writer, errors []string) {
-	io.WriteString(out, PIKA)
 	io.WriteString(out, "The parser flinched! invalid move detected.\n")
 	io.WriteString(out, " Error log:\n")
 	for _, msg := range errors {

@@ -193,7 +193,7 @@ func (p *Parser) parseExpressionStatement() *ast.ExpressionStatement {
 
 	// add error checking
 	if stmt.Expression == nil {
-		return nil 
+		return nil
 	}
 
 	// semicolon is optional in this statement
@@ -287,7 +287,7 @@ var precedences = map[token.TokenType]int{
 	token.MINUS:    SUM,
 	token.SLASH:    PRODUCT,
 	token.ASTERISK: PRODUCT,
-	token.LPAREN: 	CALL,
+	token.LPAREN:   CALL,
 }
 
 func (p *Parser) peekPrecedence() int {
@@ -471,5 +471,3 @@ func (p *Parser) parseCallArguements() []ast.Expression {
 
 	return args
 }
-
-

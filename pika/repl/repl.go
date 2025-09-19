@@ -9,7 +9,7 @@ import (
 	"pika/evaluator"
 )
 
-const PROMPT = ">>"
+const PROMPT = ">> "
 
 const PIKA = `
        .__ __            

@@ -5,13 +5,13 @@ import (
 	"fmt"
 	"io"
 	"pika/lexer"
-	"pika/token"
+	"pika/parser"
 )
 
 const PROMPT = ">>"
 
 // func to start the repl
-func Start(in io.Reader, out io.Reader) {
+func Start(in io.Reader, out io.Writer) {
 	// create scanner to take in user input
 	scanner := bufio.NewScanner(in)
 
@@ -27,10 +27,21 @@ func Start(in io.Reader, out io.Reader) {
 		// get the line and initialize a lexer with the line as input
 		line := scanner.Text()
 		l := lexer.New(line)
+		p := parser.New(l)
 
-		// print all the tokens from the lexer
-		for tok := l.NextToken(); tok.Type != token.EOF; tok = l.NextToken() {
-			fmt.Printf("%+v\n", tok)
+		program := p.ParseProgram()
+		if len(p.Errors()) != 0 {
+			printParserErrors(out, p.Errors())
+			continue
 		}
+
+		io.WriteString(out, program.String())
+		io.WriteString(out, "\n")
+	}
+}
+
+func printParserErrors(out io.Writer, errors[]string) {
+	for _, msg := range errors {
+		io.WriteString(out, "\t" + msg + "\n")
 	}
 }

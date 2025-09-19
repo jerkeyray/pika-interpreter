@@ -17,6 +17,7 @@ ______ |__|  | _______
 |  |_> >  |    <  / __ \_
 |   __/|__|__|_ \(____  /
 |__|           \/     \/ 
+
 `  
 
 // func to start the repl
@@ -51,8 +52,8 @@ func Start(in io.Reader, out io.Writer) {
 
 func printParserErrors(out io.Writer, errors[]string) {
 	io.WriteString(out, PIKA)
-	io.WriteString(out, "We ran into some funny business here!\n")
-	io.WriteString(out, " parser errors:\n")
+	io.WriteString(out, "The parser flinched! invalid move detected.\n")
+	io.WriteString(out, " Error log:\n")
 	for _, msg := range errors {
 		io.WriteString(out, "\t" + msg + "\n")
 	}

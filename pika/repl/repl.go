@@ -10,6 +10,15 @@ import (
 
 const PROMPT = ">>"
 
+const PIKA = `
+       .__ __            
+______ |__|  | _______   
+\____ \|  |  |/ /\__  \  
+|  |_> >  |    <  / __ \_
+|   __/|__|__|_ \(____  /
+|__|           \/     \/ 
+`  
+
 // func to start the repl
 func Start(in io.Reader, out io.Writer) {
 	// create scanner to take in user input
@@ -41,6 +50,9 @@ func Start(in io.Reader, out io.Writer) {
 }
 
 func printParserErrors(out io.Writer, errors[]string) {
+	io.WriteString(out, PIKA)
+	io.WriteString(out, "We ran into some funny business here!\n")
+	io.WriteString(out, " parser errors:\n")
 	for _, msg := range errors {
 		io.WriteString(out, "\t" + msg + "\n")
 	}

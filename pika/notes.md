@@ -12,3 +12,4 @@
 - leaving at page 63 start from adding infix operators tomorrow
 - leaving at page 93 continue from call expressions
 - leaving at page 109 continue implementing null type
+- leaving at page 125 continue implementing conditionals

@@ -12,40 +12,52 @@ type Object interface {
 }
 
 const (
-	INTEGER_OBJ = "INTEGER"
-	BOOLEAN_OBJ = "BOOLEAN"
-	NULL_OBJ = "NULL"
-	RETURN_VALUE_OBJ = "RETURN_VALUE"	
+	INTEGER_OBJ      = "INTEGER"
+	BOOLEAN_OBJ      = "BOOLEAN"
+	NULL_OBJ         = "NULL"
+	RETURN_VALUE_OBJ = "RETURN_VALUE"
+	ERROR_OBJ        = "ERROR"
 )
 
 // whenever we encounter an integer in source code
-//  we change to ast.IntegerLiteral and while evaluating AST node
+//
+//	we change to ast.IntegerLiteral and while evaluating AST node
+//
 // convert it to Object.Integer saving the value in a struct and passing its reference
 type Integer struct {
 	Value int64
 }
 
-func (i *Integer) Type() ObjectType {return INTEGER_OBJ}
-func (i *Integer) Inspect() string {return fmt.Sprintf("%d", i.Value)}
+func (i *Integer) Type() ObjectType { return INTEGER_OBJ }
+func (i *Integer) Inspect() string  { return fmt.Sprintf("%d", i.Value) }
 
 // boolean
 type Boolean struct {
-	Value bool 
+	Value bool
 }
 
-func (b *Boolean) Type() ObjectType {return BOOLEAN_OBJ}
-func (b *Boolean) Inspect() string {return fmt.Sprintf("%t", b.Value)}
+func (b *Boolean) Type() ObjectType { return BOOLEAN_OBJ }
+func (b *Boolean) Inspect() string  { return fmt.Sprintf("%t", b.Value) }
 
 // null
-type Null struct {}
+type Null struct{}
 
-func (n *Null) Type() ObjectType {return NULL_OBJ}
-func (n *Null) Inspect() string {return "null"}
+func (n *Null) Type() ObjectType { return NULL_OBJ }
+func (n *Null) Inspect() string  { return "null" }
 
 // wrapper around another object to represent return value
 type ReturnValue struct {
-	Value Object 
+	Value Object
 }
 
-func (rv *ReturnValue) Type() ObjectType {return RETURN_VALUE_OBJ}
-func (rv *ReturnValue) Inspect() string {return rv.Value.Inspect()}
+func (rv *ReturnValue) Type() ObjectType { return RETURN_VALUE_OBJ }
+func (rv *ReturnValue) Inspect() string  { return rv.Value.Inspect() }
+
+// error handling
+
+type Error struct {
+	Message string
+}
+
+func (e *Error) Type() ObjectType { return ERROR_OBJ }
+func (e *Error) Inspect() string  { return "Error: " + e.Message }

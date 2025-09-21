@@ -9,7 +9,7 @@ ______ |__|  | _______
 |__|           \/     \/
 ```
 
-Pika is a tree-walking interpreter for a dynamically typed programming language written in Go. It features a complete lexer, parser, and evaluator supporting multiple data types, functions, closures, and built-in operations.
+Pika is a tree-walking interpreter for a dynamically typed programming language written in Go. This project was built as a learning experience following Thorsten Ball's book "Writing An Interpreter In Go". It features a complete lexer, parser, and evaluator supporting multiple data types, functions, closures, and built-in operations.
 
 ## Features
 
@@ -73,23 +73,11 @@ let isActive = true;
 ### Functions
 
 ```javascript
-// Function declaration
-let add = fn(x, y) {
-    return x + y;
-};
-
-// Function call
+let add = fn(x, y) { return x + y; };
 let result = add(5, 3);
 
 // Closures
-let makeCounter = fn() {
-    let count = 0;
-    return fn() {
-        count = count + 1;
-        return count;
-    };
-};
-
+let makeCounter = fn() { let count = 0; return fn() { count = count + 1; return count; }; };
 let counter = makeCounter();
 counter(); // 1
 counter(); // 2
@@ -98,13 +86,7 @@ counter(); // 2
 ### Conditionals
 
 ```javascript
-let max = fn(x, y) {
-    if (x > y) {
-        return x;
-    } else {
-        return y;
-    }
-};
+let max = fn(x, y) { if (x > y) { return x; } else { return y; } };
 ```
 
 ### Array Operations
@@ -234,31 +216,14 @@ pika/
 ### Fibonacci Function
 
 ```javascript
-let fibonacci = fn(n) {
-    if (n < 2) {
-        return n;
-    } else {
-        return fibonacci(n - 1) + fibonacci(n - 2);
-    }
-};
-
+let fibonacci = fn(n) { if (n < 2) { return n; } else { return fibonacci(n - 1) + fibonacci(n - 2); } };
 fibonacci(10); // 55
 ```
 
 ### Array Processing
 
 ```javascript
-let map = fn(arr, f) {
-    let iter = fn(arr, accumulated) {
-        if (len(arr) == 0) {
-            return accumulated;
-        } else {
-            return iter(rest(arr), push(accumulated, f(first(arr))));
-        }
-    };
-    return iter(arr, []);
-};
-
+let map = fn(arr, f) { let iter = fn(arr, accumulated) { if (len(arr) == 0) { return accumulated; } else { return iter(rest(arr), push(accumulated, f(first(arr)))); } }; return iter(arr, []); };
 let double = fn(x) { return x * 2; };
 map([1, 2, 3, 4], double); // [2, 4, 6, 8]
 ```
@@ -268,11 +233,7 @@ map([1, 2, 3, 4], double); // [2, 4, 6, 8]
 ```javascript
 let person = {"name": "Alice", "age": 30};
 let getName = fn(p) { return p["name"]; };
-let incrementAge = fn(p) {
-    p["age"] = p["age"] + 1;
-    return p;
-};
-
+let incrementAge = fn(p) { p["age"] = p["age"] + 1; return p; };
 getName(person); // "Alice"
 ```
 
@@ -285,17 +246,6 @@ Pika uses a tree-walking interpreter architecture:
 3. **Evaluator**: Walks the AST and evaluates expressions in the given environment
 
 The interpreter supports proper lexical scoping through environment chaining and implements closures by capturing the defining environment within function objects.
-
-## Current Limitations
-
-- Only supports integers (no floats)
-- No postfix operators
-- Basic error handling
-- Limited standard library
-
-## License
-
-This project is part of a learning exercise in building interpreters.
 
 ## License
 

@@ -14,3 +14,5 @@
 - leaving at page 109 continue implementing null type
 - leaving at page 125 continue implementing conditionals
 - leaving at page 148 continue implementing garbage collection
+
+- add more builtin functions rn i have only implemented len

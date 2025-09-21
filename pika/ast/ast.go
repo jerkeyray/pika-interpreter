@@ -276,7 +276,7 @@ func (ce *CallExpression) String() string {
 // string literal
 type StringLiteral struct {
 	Token token.Token
-	Value string 
+	Value string
 }
 
 func (sl *StringLiteral) expressionNode()      {}
@@ -293,8 +293,8 @@ func (al *ArrayLiteral) expressionNode()      {}
 func (al *ArrayLiteral) TokenLiteral() string { return al.Token.Literal }
 func (al *ArrayLiteral) String() string {
 	var out bytes.Buffer
-	
-	elements := []string{}	
+
+	elements := []string{}
 	for _, el := range al.Elements {
 		elements = append(elements, el.String())
 	}
@@ -322,7 +322,7 @@ func (ie *IndexExpression) String() string {
 	out.WriteString("[")
 	out.WriteString(ie.Index.String())
 	out.WriteString("])")
-	
+
 	return out.String()
 }
 

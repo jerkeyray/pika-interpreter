@@ -6,6 +6,7 @@ import (
 	"pika/parser"
 	"testing"
 )
+
 func TestEvalIntegerExpression(t *testing.T) {
 	tests := []struct {
 		input    string

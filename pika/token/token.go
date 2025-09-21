@@ -29,12 +29,12 @@ const (
 	SEMICOLON = ";"
 	COLON     = ":"
 	// Grouping
-	LPAREN    = "("
-	RPAREN    = ")"
-	LBRACE    = "{"
-	RBRACE    = "}"
-	LBRACKET	= "["
-	RBRACKET	= "]"
+	LPAREN   = "("
+	RPAREN   = ")"
+	LBRACE   = "{"
+	RBRACE   = "}"
+	LBRACKET = "["
+	RBRACKET = "]"
 	// Keywords
 	FUNCTION = "FUNCTION"
 	LET      = "LET"

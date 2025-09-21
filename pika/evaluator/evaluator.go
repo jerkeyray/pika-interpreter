@@ -65,7 +65,7 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 
 	case *ast.Identifier:
 		return evalIdentifier(node, env)
-	
+
 	case *ast.StringLiteral:
 		return &object.String{Value: node.Value}
 
@@ -92,7 +92,7 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 			return elements[0]
 		}
 		return &object.Array{Elements: elements}
-	
+
 	case *ast.IndexExpression:
 		left := Eval(node.Left, env)
 		if isError(left) {
@@ -311,7 +311,7 @@ func evalIdentifier(
 
 func evalExpressions(
 	exps []ast.Expression,
-	env  *object.Environment,
+	env *object.Environment,
 ) []object.Object {
 	var result []object.Object
 
@@ -332,11 +332,11 @@ func applyFunction(fn object.Object, args []object.Object) object.Object {
 		extendedEnv := extendFunctionEnv(fn, args)
 		evaluated := Eval(fn.Body, extendedEnv)
 		return unwrappedReturnValue(evaluated)
-	
+
 	case *object.Builtin:
 		return fn.Fn(args...)
-	
-	default: 
+
+	default:
 		return newError("not a function: %s", fn.Type())
 	}
 }
@@ -373,7 +373,7 @@ func evalStringInfixExpression(operator string, left, right object.Object) objec
 
 func evalIndexExpression(left, index object.Object) object.Object {
 	switch {
-		// check if left is an array and index is an integer else return error
+	// check if left is an array and index is an integer else return error
 	case left.Type() == object.ARRAY_OBJ && index.Type() == object.INTEGER_OBJ:
 		return evalArrayIndexExpression(left, index)
 		// check if left is a hash and index is hashable else return error
@@ -401,7 +401,7 @@ func evalArrayIndexExpression(array, index object.Object) object.Object {
 func evalHashLiteral(node *ast.HashLiteral, env *object.Environment) object.Object {
 	// map the hash key to the hash pair(key, value)
 	pairs := make(map[object.HashKey]object.HashPair)
-	
+
 	// loop through each key value pair in the hash literal
 	// evaluate the key and value
 	// check if key is hashable
@@ -412,7 +412,7 @@ func evalHashLiteral(node *ast.HashLiteral, env *object.Environment) object.Obje
 		if isError(key) {
 			return key
 		}
-		
+
 		hashKey, ok := key.(object.Hashable)
 		if !ok {
 			return newError("unusable as hash key: %s", key.Type())
@@ -428,7 +428,7 @@ func evalHashLiteral(node *ast.HashLiteral, env *object.Environment) object.Obje
 	}
 
 	return &object.Hash{Pairs: pairs}
-}	
+}
 
 // eval hash index expression
 func evalHashIndexExpression(hash, index object.Object) object.Object {

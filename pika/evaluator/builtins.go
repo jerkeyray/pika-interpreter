@@ -24,7 +24,7 @@ var builtins = map[string]*object.Builtin{
 				return newError("argument to `len` not supported, got %s", args[0].Type())
 			}
 		},
-	}, 
+	},
 
 	"first": &object.Builtin{
 		Fn: func(args ...object.Object) object.Object {
@@ -79,7 +79,7 @@ var builtins = map[string]*object.Builtin{
 			length := len(arr.Elements)
 			if length > 0 {
 				newElements := make([]object.Object, length-1, length)
-				copy(newElements, arr.Elements[1: length]) // copy all elements except first
+				copy(newElements, arr.Elements[1:length]) // copy all elements except first
 				return &object.Array{Elements: newElements}
 			}
 			return NULL

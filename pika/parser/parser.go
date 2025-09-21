@@ -494,7 +494,7 @@ func (p *Parser) parseExpressionList(end token.TokenType) []ast.Expression {
 	if p.peekTokenIs(end) {
 		p.nextToken()
 		return list
-	}	
+	}
 
 	p.nextToken()
 	list = append(list, p.parseExpression(LOWEST))
@@ -516,16 +516,16 @@ func (p *Parser) parseExpressionList(end token.TokenType) []ast.Expression {
 func (p *Parser) parseIndexExpression(left ast.Expression) ast.Expression {
 	// create an AST node for IndexExpression
 	exp := &ast.IndexExpression{Token: p.curToken, Left: left}
-	
+
 	p.nextToken()
 	// parse the expression inside the brackets and assign it to Index field of node
 	exp.Index = p.parseExpression(LOWEST)
-	
+
 	// expect the next token to be a closing bracket
 	if !p.expectPeek(token.RBRACKET) {
 		return nil
 	}
-	
+
 	return exp
 }
 
@@ -544,7 +544,7 @@ func (p *Parser) parseHashLiteral() ast.Expression {
 
 	for {
 		key := p.parseExpression(LOWEST)
-		
+
 		if !p.expectPeek(token.COLON) {
 			return nil
 		}

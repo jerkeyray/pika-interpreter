@@ -21,7 +21,7 @@ const (
 	NULL_OBJ         = "NULL"
 	RETURN_VALUE_OBJ = "RETURN_VALUE"
 	ERROR_OBJ        = "ERROR"
-	FUNCTION_OBJ	   = "FUNCTION"
+	FUNCTION_OBJ     = "FUNCTION"
 	STRING_OBJ       = "STRING"
 	BUILTIN_OBJ      = "BUILTIN"
 	ARRAY_OBJ        = "ARRAY"
@@ -72,11 +72,11 @@ func (e *Error) Type() ObjectType { return ERROR_OBJ }
 func (e *Error) Inspect() string  { return "Error: " + e.Message }
 
 // functions carry their own environment
-// this allows for closures 
+// this allows for closures
 type Function struct {
-	Parameters  []*ast.Identifier
-	Body 				*ast.BlockStatement
-	Env         *Environment
+	Parameters []*ast.Identifier
+	Body       *ast.BlockStatement
+	Env        *Environment
 }
 
 func (f *Function) Type() ObjectType { return FUNCTION_OBJ }
@@ -94,13 +94,13 @@ func (f *Function) Inspect() string {
 	out.WriteString(") {\n")
 	out.WriteString(f.Body.String())
 	out.WriteString("\n}")
-	
+
 	return out.String()
 }
 
 // string object
 type String struct {
-	Value string 
+	Value string
 }
 
 func (s *String) Type() ObjectType { return STRING_OBJ }
@@ -121,10 +121,10 @@ type Array struct {
 	Elements []Object
 }
 
-func (a *Array) Type() ObjectType { return ARRAY_OBJ } 
+func (a *Array) Type() ObjectType { return ARRAY_OBJ }
 func (a *Array) Inspect() string {
 	var out bytes.Buffer
-	
+
 	elements := []string{}
 
 	for _, el := range a.Elements {
@@ -162,7 +162,7 @@ func (i *Integer) HashKey() HashKey {
 	return HashKey{Type: i.Type(), Value: uint64(i.Value)}
 }
 
-// method to generate hash of string objects (using FNV hash function) 
+// method to generate hash of string objects (using FNV hash function)
 func (s *String) HashKey() HashKey {
 	h := fnv.New64a()
 	h.Write([]byte(s.Value))

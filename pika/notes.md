@@ -15,3 +15,22 @@ bookmarks:
 - leaving at page 125 continue implementing conditionals
 - leaving at page 148 continue implementing garbage collection
 - leaving at page 182 continue implementing hashmaps
+
+features:
+- mathematical expressions
+- variable bindings
+- functions 
+- application of functions
+- conditionals
+- returns
+- higher order functions
+- lexical scoping
+- closures
+- int, bool, string, array, hashmaps
+- print values
+
+
+
+
+
+

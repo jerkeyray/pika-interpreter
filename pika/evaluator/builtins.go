@@ -1,6 +1,7 @@
 package evaluator
 
 import (
+	"fmt"
 	"pika/object"
 )
 
@@ -103,6 +104,16 @@ var builtins = map[string]*object.Builtin{
 			newElements[length] = args[1]   // add new element at the end
 
 			return &object.Array{Elements: newElements}
+		},
+	},
+
+	"print": &object.Builtin{
+		Fn: func(args ...object.Object) object.Object {
+			for _, arg := range args {
+				// print the string representation of each argument
+				fmt.Println(arg.Inspect())
+			}
+			return NULL
 		},
 	},
 }

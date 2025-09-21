@@ -27,6 +27,8 @@ const (
 	// Delimiters
 	COMMA     = ","
 	SEMICOLON = ";"
+	COLON     = ":"
+	// Grouping
 	LPAREN    = "("
 	RPAREN    = ")"
 	LBRACE    = "{"
